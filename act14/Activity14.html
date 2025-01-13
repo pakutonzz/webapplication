@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <div id="maincontainer"></div>
+        <script>
+            const container = document.getElementById('maincontainer');
+
+            const heading = document.createElement('h2');
+            heading.textContent = 'Exercise 04: JavaScript&DOM';
+            container.appendChild(heading);
+
+            const timebutton = document.createElement('button');
+            timebutton.textContent = 'Click me to display Date and Time';
+            container.appendChild(timebutton);
+
+            const lineBreak = document.createElement("div");
+            lineBreak.innerHTML = "<br>";
+            container.appendChild(lineBreak);
+
+
+            const infobutton = document.createElement('div');
+            infobutton.textContent = 'Personal Info';
+            infobutton.style.color = 'plum';
+            infobutton.style.textDecoration = 'underline';
+            infobutton.style.cursor = 'pointer';
+            infobutton.style.width = 'fit-content';
+    
+            container.appendChild(infobutton);
+
+            const info = document.createElement('div');
+            info.innerHTML = `
+            <ul>
+                <li>Patkultorn Chairat, ID: 66011437</li>
+                <li>Subject: Web Application Development</li>
+                <li>Semester: 2</li>
+            </ul>`;
+            info.style.display = 'none';
+            container.appendChild(info);
+
+            infobutton.addEventListener('click', () => {
+                if (info.style.display === 'none') {
+                    info.style.display = 'block';
+                } else {
+                    info.style.display = 'none';
+                }
+            });
+
+            infobutton.addEventListener('mouseover', () => {
+                infobutton.style.color = 'blue';
+                infobutton.style.backgroundColor = 'yellow';
+            });
+
+            infobutton.addEventListener('mouseout', () => {
+                infobutton.style.backgroundColor = null;
+                infobutton.style.color = 'plum';
+            });
+
+            const snapshot = document.createElement('h1');
+            snapshot.textContent = 'Snapshots';
+            container.appendChild(snapshot);
+
+            const list = document.createElement('ul');
+            const items = ['Fireworks', 'Crest', 'Action', 'Buffalo'];
+            const images = ['https://i.postimg.cc/6Q4LdFjP/20240812-124851-c69-sky-full-of-fireworks.jpg'
+            , 'https://i.postimg.cc/CM9Z8zTw/images.jpg'
+            , 'https://i.postimg.cc/CLVhYDpn/download.jpg'
+            , 'https://i.postimg.cc/prHwNf52/download-1.jpg'
+            ];
+
+            items.forEach((item, index) => {
+                const listItem = document.createElement('li');
+                const link = document.createElement('div');
+                link.textContent = item;
+                Object.assign(link.style, {
+                    color: 'blue',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    width: 'fit-content'
+                });
+                listItem.appendChild(link);
+                list.appendChild(listItem);
+
+                link.addEventListener('click', () => {
+                    image.src = images[index];
+                });
+            });
+            container.appendChild(list);
+
+            const image = document.createElement('img');
+            image.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/KMITL_Sublogo.svg/512px-KMITL_Sublogo.svg.png';
+            image.style.width = '500px';
+            container.appendChild(image);
+
+            const worker = new Worker('worker.js');
+            var isrunning = false;
+
+            function startWorker() {
+                worker.postMessage('start');
+                worker.onmessage = function (e) {
+                    timebutton.innerHTML = e.data.date;
+                    Object.assign(timebutton.style, {
+                        color: e.data.textColor,
+                        backgroundColor: e.data.backgroundColor,
+                        position: 'fixed',
+                        top : 0,
+                        right : 0,
+                    });
+                };
+                isrunning = true;
+            }
+
+            function stopWorker() {
+                worker.postMessage('stop');
+                isrunning = false;
+                Object.assign(timebutton.style, {
+                    position: null,
+                });
+            }
+
+            timebutton.addEventListener('click', () => {
+                if (isrunning) {
+                    stopWorker();
+                } else {
+                    startWorker();
+                }
+            });
+        </script>
+    </body>
+</html>
